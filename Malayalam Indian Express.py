@@ -1,16 +1,19 @@
-from requests_html import HTMLSession 
-from bs4 import BeautifulSoup 
-from dateparser import parse 
+#IMPORTING THE LIBRARIES
+from requests_html import HTMLSession #request
+from bs4 import BeautifulSoup #content
+from dateparser import parse #datetime format
 from urllib.parse import urljoin 
 from dateparser.search import search_dates
 import pandas as pd
 from selenium import webdriver
 from time import sleep
 
+#establish a session
 session = HTMLSession()
 
 base_url = 'https://malayalam.indianexpress.com/'
 
+#Crawling Sections from news site
 # SECTION LINKS
 def get_section_links(retry = 3):
     r = session.get(base_url, timeout = 180) 
@@ -21,10 +24,13 @@ def get_section_links(retry = 3):
                    'https://malayalam.indianexpress.com/children/']
     section_links = [url for url in section_links if url != base_url and url not in ignore_list]
     return section_links
-
+#Crawl section_links
 section_links = get_section_links()
-article_links = []
+
+#Since it was not returning the proper date from articles so first crawled article
+#And the used the date to append articles
 # ARTICLE
+article_links = []
 def get_article(url, retry = 3):
 #for url in article_links: break
     r =session.get(url, timeout = 180)
@@ -36,6 +42,7 @@ def get_article(url, retry = 3):
     row['link'] = url
     return row
 
+#Article_links
 def get_article_links_frm_page(soup, retry= 3):
     #for url in section_links: break
     #r = session.get(url,timeout = 3*60)
@@ -90,6 +97,7 @@ def get_article_links(url):
     driver.quit()
     return article_links
 
+# Crawl Article links
 upto = parse('25 July 2021')
 titles = []
 article_links = []
